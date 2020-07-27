@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div></div>
+</body>
+<style>
+    div {
+        --c:#0ff;
+        --p:90%;
+        width: 300px;
+        height: 20px;
+        margin: 0 auto;
+        background-color: silver;
+        border-radius: 30px;
+        background-image: radial-gradient(closest-side circle at var(--p),var(--c),var(--c)100%,transparent),linear-gradient(var(--c),var(--c));
+        background-size:100%,var(--p);
+        background-repeat: no-repeat;
+    }
+</style>
+</html>
