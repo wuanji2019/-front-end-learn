@@ -1,3 +1,6 @@
+# ES6 学习 
+学习地址：https://juejin.im/post/5d9bf530518825427b27639d#heading-14
+
 ## 声明
 声明方法 var、const、let、function、class、import
 
@@ -16,7 +19,8 @@
 
 ## 字符串扩展
 
-* Unicode表示法
+* Unicode表示法  
+ps: 小程序跳转webview的时候 经常使用encodeURIComponent来对url的参数进行转码
 escape() 使用转义序列替换某些字符来对字符串进行编码
 unescape()  对使用 escape() 编码的字符串进行解码
 encodeURI() 通过转义某些字符对 URI 进行编码
@@ -189,12 +193,12 @@ const alpha = ['a', 'b', 'c'];
 const numeric = [1, 2, 3];
 let alphaNumeric = alpha.concat(numeric);
 
-console.log(alphaNumeric);
+console.log(alphaNumeric); // ["a", "b", "c", 1, 2, 3]
 
 numeric[Symbol.isConcatSpreadable] = false;
 alphaNumeric = alpha.concat(numeric);
 
-console.log(alphaNumeric);
+console.log(alphaNumeric); // ["a", "b", "c", Array(3)]
 ```
   7. Symbol.species：指向一个构造函数，当实例对象使用自身构造函数时会调用指定的构造函数
   8. Symbol.match：指向一个函数，当实例对象被String.prototype.match()调用时会重新定义match()的行为
@@ -203,8 +207,8 @@ const regexp1 = /foo/;
 
 regexp1[Symbol.match] = false;
 
-console.log('/foo/'.startsWith(regexp1));
-console.log('/baz/'.endsWith(regexp1));
+console.log('/foo/'.startsWith(regexp1)); //true
+console.log('/baz/'.endsWith(regexp1)); //false
 ```
   9. Symbol.replace：指向一个函数，当实例对象被String.prototype.replace()调用时会重新定义replace()的行为
   10. Symbol.search：指向一个函数，当实例对象被String.prototype.search()调用时会重新定义search()的行为
@@ -359,3 +363,127 @@ console.log(set3)
 * Object结构提供字符串—值的对应，Map结构提供值—值的对应
 
 ## WeakMap
+* 定义：和Map结构类似，成员键只能是对象
+* 声明：const set = new WeakMap(arr)
+* 传参：具有Iterator接口且每个成员都是一个双元素数组的数据结构
+* 属性
+  * constructor：构造函数，返回WeakMap
+* 方法
+  * get()：返回键值对
+  * set()：添加键值对，返回实例
+  * delete()：删除键值对，返回布尔
+  * has()：检查键值对，返回布尔
+
+
+## Proxy
+学习 https://www.jianshu.com/p/6fe38ba42a56
+* 定义：修改某些操作的默认行为
+* 声明：const proxy = new Proxy(target, handler)
+```js
+let target = {
+  message1: "hello",
+  message2: "everyone"
+};
+let handler1 = {};
+let proxy1 = new Proxy();
+console.log(proxy1.message1); // hello
+console.log(proxy1.message2); // everyone
+let handler2 = {
+  get: function(target, prop, receiver) {
+    return "world";
+  }
+};
+let proxy2 = new Proxy(target, handler2);
+console.log(proxy2.message1); // world
+console.log(proxy2.message2); // world
+```
+* 传参：
+  * target：拦截的目标对象
+  * handler：定制拦截行为
+* 方法
+  * Proxy.revocable()：返回可取消的Proxy实例(返回{ proxy, revoke }，通过revoke()取消代理)
+
+```js
+var revocable = Proxy revocable({}, {
+  get: function(target,name) {
+    return "[[" + name + "]]";
+  }
+});
+var proxy = revocable.proxy;
+console.log(proxy.foo);
+revocable.revoke();
+console.log(proxy.foo);
+proxy.foo =1;
+delete proxy.foo;
+typeof proxy
+```
+
+可以轻松地验证对象的传递值
+```js
+let validator = {
+  set: function(obj, prop, value) {
+    if (prop === 'age') {
+      if (!Number.isInteger(value)) {
+        throw new TypeError('The age is not an integer');
+      }
+      if (value > 200) {
+        throw new RangeError('The age seems invalid');
+      }
+    }
+
+    // The default behavior to store the value
+    obj[prop] = value;
+
+    // Indicate success
+    return true;
+  }
+};
+
+const person = new Proxy({}, validator);
+
+person.age = 100;
+console.log(person.age); // 100
+person.age = 'young';    // Throws an exception
+person.age = 300;        // Throws an exception
+```
+
+* 拦截方式
+  * get()：拦截对象属性读取
+  ```js
+  var person = {"name":"zhangsan"};
+  //创建一个代理对象pro，代理person的读写操作
+  var pro = new Proxy(person, {
+    get:function(target,property) {
+      return "李四"
+    }
+  });
+  console.log(pro.name); //李四
+  ```
+  * set()：拦截对象属性设置，返回布尔
+  ```js
+  var bankAccount = {"RMB":1000, "dollar":0 };
+  //创建一个Proxy代理实例
+  var banker = new Proxy(bankeAccount,{
+    //编写get处理程序
+    get:function(target,property) {
+      //判断余额是否大于0
+      if(target[property] > 0) {
+        //有余额，就返回余额
+        return target[property];
+      } else {
+        //没钱了
+        return "余额不足"
+      }
+    },
+    //编写set处理程序
+    set:function(target,property,value) {
+      //存入的数额必须是一个数字类型
+    }
+  })
+
+  ```
+  * has()：拦截对象属性检查k in obj，返回布尔
+  * deleteProperty()：拦截对象属性删除delete obj[k]，返回布尔
+  * defineProperty()：拦截对象属性定义Object.defineProperty()、Object.defineProperties()，返回布尔
+  * ownKeys()：拦截对象属性遍历for-in、Object.keys()、Object.getOwnPropertyNames()、Object.getOwnPropertySymbols()，返回数组
+  * getOwnPropertyDescriptor()：拦截对象属性描述读取Object.getOwnPropertyDescriptor()，返回对象
