@@ -377,6 +377,8 @@ console.log(set3)
 
 ## Proxy
 学习 https://www.jianshu.com/p/6fe38ba42a56
+
+proxy.js
 * 定义：修改某些操作的默认行为
 * 声明：const proxy = new Proxy(target, handler)
 ```js
@@ -446,7 +448,6 @@ console.log(person.age); // 100
 person.age = 'young';    // Throws an exception
 person.age = 300;        // Throws an exception
 ```
-
 * 拦截方式
   * get()：拦截对象属性读取
   ```js
@@ -460,30 +461,44 @@ person.age = 300;        // Throws an exception
   console.log(pro.name); //李四
   ```
   * set()：拦截对象属性设置，返回布尔
-  ```js
-  var bankAccount = {"RMB":1000, "dollar":0 };
-  //创建一个Proxy代理实例
-  var banker = new Proxy(bankeAccount,{
-    //编写get处理程序
-    get:function(target,property) {
-      //判断余额是否大于0
-      if(target[property] > 0) {
-        //有余额，就返回余额
-        return target[property];
-      } else {
-        //没钱了
-        return "余额不足"
-      }
-    },
-    //编写set处理程序
-    set:function(target,property,value) {
-      //存入的数额必须是一个数字类型
-    }
-  })
-
-  ```
   * has()：拦截对象属性检查k in obj，返回布尔
   * deleteProperty()：拦截对象属性删除delete obj[k]，返回布尔
   * defineProperty()：拦截对象属性定义Object.defineProperty()、Object.defineProperties()，返回布尔
   * ownKeys()：拦截对象属性遍历for-in、Object.keys()、Object.getOwnPropertyNames()、Object.getOwnPropertySymbols()，返回数组
   * getOwnPropertyDescriptor()：拦截对象属性描述读取Object.getOwnPropertyDescriptor()，返回对象
+  * getPrototypeOf():拦截对象原型读取instanceof、Object.getPrototypeOf()、Object.prototype.__proto__、Object.prototype.isPrototypeOf()、Reflect.getPrototypeOf()，返回对象
+  * setPrototypeOf()：拦截对象原型设置Object.setPrototypeOf()，返回布尔
+  * isExtensible()：拦截对象是否可扩展读取Object.isExtensible()，返回布尔
+  * preventExtensions()：拦截对象不可扩展设置Object.preventExtensions()，返回布尔
+  * apply()：拦截Proxy实例作为函数调用proxy()、proxy.apply()、proxy.call()
+  * construct()：拦截Proxy实例作为构造函数调用new proxy()
+>应用场景
+* Proxy.revocable()：不允许直接访问对象，必须通过代理访问，一旦访问结束就收回代理权不允许再次访问
+* get()：读取未知属性报错、读取数组负数索引的值、封装链式操作、生成DOM嵌套节点
+* set()：数据绑定(Vue数据绑定实现原理)、确保属性值设置符合要求、防止内部属性被外部读写
+* has()：隐藏内部属性不被发现、排除不符合属性条件的对象
+* deleteProperty()：保护内部属性不被删除
+* defineProperty()：阻止属性被外部定义
+* ownKeys()：保护内部属性不被遍历
+>重点难点
+* 要使Proxy起作用，必须针对实例进行操作，而不是针对目标对象进行操作
+* 没有设置任何拦截时，等同于直接通向原对象
+* 属性被定义为不可读写/扩展/配置/枚举时，使用拦截方法会报错
+* 代理下的目标对象，内部this指向Proxy代理
+
+Reflect
+学习地址 https://www.runoob.com/w3cnote/es6-reflect-proxy.html
+定义：保持Object方法的默认行为
+* get()：返回对象属性
+* set()：设置对象属性，返回布尔
+* has()：检查对象属性，返回布尔
+* deleteProperty()：删除对象属性，返回布尔
+* defineProperty()：定义对象属性，返回布尔
+* ownKeys()：遍历对象属性，返回数组
+* getOwnPropertyDescriptor()：返回对象属性描述，返回对象
+* getPrototypeOf()：返回对象原型，返回对象
+* setPrototypeOf()：设置对象原型，返回布尔
+* isExtensible()：返回对象是否可扩展，返回布尔
+* preventExtensions()：设置对象不可扩展，返回布尔
+* apply()：绑定this后执行指定函数
+* construct()：调用构造函数创建实例
