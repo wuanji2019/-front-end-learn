@@ -502,3 +502,29 @@ Reflect
 * preventExtensions()：设置对象不可扩展，返回布尔
 * apply()：绑定this后执行指定函数
 * construct()：调用构造函数创建实例
+
+class (构造函数语法糖)
+* 方法关键字
+  * constructor()：构造函数，new命令生成实例时自动调用
+  * extends：继承父类
+  * super：新建父类的this
+  * static：定义静态属性方法
+  * get：取值函数，拦截属性的取值行为
+  * set：存值函数，拦截属性的存值行为
+* 属性 prototype
+  * _proto__：构造函数的继承(总是指向父类)
+  * __proto__.__proto__：子类的原型的原型，即父类的原型(总是指向父类的__proto__)
+  * prototype.__proto__：属性方法的继承(总是指向父类的prototype)
+* 静态属性
+继承
+
+>原生构造函数
+* String()
+* Number()
+* Boolean()
+* Array()
+* Object()
+* Function()
+* Date()
+* RegExp()
+* Error()

@@ -29,5 +29,6 @@ readonly vs const
 继承 
 公共，私有与受保护的修饰符 public private protected
 readonly修饰符
+静态属性
 
 

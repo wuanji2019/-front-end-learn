@@ -123,14 +123,24 @@
 // console.log(proxy.name = "Jerry") 
 // console.log(proxy.name)
 
-// 定义 Set 集合
-const queuedObservers = new Set();
+// 定义 Set 集合 数据绑定：观察者模式
+const observerQueue = new Set();
 // 把观察者函数都放入 Set 集合中
-const observe = fn => queuedObservers.add(fn);
+const observe = fn => observerQueue.add(fn);
 // observable 返回原始对象的代理，拦截赋值操作
 const observable = obj => new Proxy(obj, {set});
 function set(target, key, value, receiver) {
     const result = Reflect.set(target,key,value,receiver);
+    observerQueue.forEach(v => v());
+    return result
 }
+const person = observable({ age: 25, name:"Yajun"});
+const print = () => console.log(`${person.name} is ${person.age} years old`);
+observe(print);
+person.name = "Joway";
+
+//Class
+
+
 
     
