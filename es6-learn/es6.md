@@ -737,3 +737,69 @@ b.padStart(10, 'hello');
 ## Async
 * 定义：使异步函数以同步函数的形式书写(Generator函数语法糖)
 * 原理：将Generator函数和自动执行器spawn包装在一个函数里
+* 形式：将Generator函数的*替换成async，将yield替换成await
+* 声明
+  * 具名函数： async function Func() {}
+  * 函数表达式：const func = async function() {}
+  * 箭头函数：const func = async () => {}
+  * 对象方法：const obj = { async func() {}}
+  * 类方法：class cla { async func() {}}
+* await命令：等待当前Promise对象状态变更完毕
+  * 正常情况：后面是Promise对象则返回其结果，否则返回对应的值
+  * 后随Thenable对象：将其等同于Promise对象返回其结果
+* 错误处理：将await命令Promise对象放到try-catch中(可放多个)
+> Async对Generator改进
+* 内置执行器
+* 更好的语义
+* 更广的适用性
+* 返回值是Promise对象
+> 应用场景
+* 按顺序完成异步操作
+>重点难点
+* Async函数返回Promise对象，可使用then()添加回调函数
+* 内部return返回值会成为后续then()的出参
+* 内部抛出错误会导致返回的Promise对象变为rejected状态，被catch()接收到
+* 返回的Promise对象必须等到内部所有await命令Promise对象执行完才会发生状态改变，除非遇到return语句或抛出错误
+* 任何一个await命令Promise对象变为rejected状态，整个Async函数都会中断执行
+* 希望即使前一个异步操作失败也不要中断后面的异步操作
+  * 将await命令Promise对象放到try-catch中
+  * await命令Promise对象跟一个catch()
+* await命令Promise对象可能变为rejected状态，最好把其放到try-catch中
+* 多个await命令Promise对象若不存在继发关系，最好让它们同时触发
+* await命令只能用在Async函数之中，否则会报错
+* 数组使用forEach()执行async/await会失效，可使用for-of和Promise.all()代替
+* 可保留运行堆栈，函数上下文随着Async函数的执行而存在，执行完成就消失.
+
+## ES2018
+
+### 对象扩展
+* 扩展运算符(...)
+  * 克隆对象：const obj = { _proto_ : Object.getPrototypeOf(obj1), ...obj1 } 
+  * 合并对象：const obj = { ...obj1,...obj2 }
+  * 转换字符串为对象： { ..."hello" }
+  * 与对象解构赋值结合：const { x, ...rest/spread } = { x: 1, y: 2, z: 3 }(不能复制继承自原型对象的属性)
+  * 修改现有对象部分属性：const obj = { x: 1, ...{ x: 2 } }
+### Promise
+* finally()：指定不管最后状态如何都会执行的回调函数
+### Async
+* 异步迭代器(for-await-of)：循环等待每个Promise对象变为resolved状态才进入下一步
+
+## ES2019
+### 字符串扩展
+* 直接输入U+2028和U+2029：字符串可直接输入行分隔符和段分隔符
+* JSON.stringify()改造：可返回不符合UTF-8标准的字符串
+* trimStart()：消除字符串头部空格，返回新字符串
+* trimEnd()：消除字符串尾部空格，返回新字符串
+### 对象扩展
+* Object.fromEntries()：返回以键和值组成的对象(Object.entries()的逆操作)
+### 数组扩展
+* sort()稳定性：排序关键字相同的项目其排序前后的顺序不变，默认为稳定
+* flat()：扁平化数组，返回新数组
+* flatMap()：映射且扁平化数组，返回新数组(只能展开一层数组)
+### 函数扩展
+* toString()改造：返回函数原始代码(与编码一致)
+* catch()参数可省略：catch()中的参数可省略
+### Symbol
+* description：返回Symbol值的描述
+
+
